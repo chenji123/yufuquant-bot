@@ -1,0 +1,6 @@
+{
+  "rest_api_base_url": "http://127.0.0.1:8000/api/v1",
+  "ws_api_uri": "ws://127.0.0.1:8000/ws/v1/streams/",
+  "auth_token": "nd2f47h5h5ba04e23v00085geby6c12mam9ff9ec",
+  "robot_id": 1
+}
