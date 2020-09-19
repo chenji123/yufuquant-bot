@@ -39,16 +39,16 @@ async def main():
     await ws_api_client.auth(auth_token=auth_token)
 
     # 订阅机器人日志话题
-    topics = ["robot#1.log"]
+    topics = [f"robot#{robot_id}.log"]
     await ws_api_client.sub(topics)
 
     while True:
         try:
             # 获取最新的机器人配置信息
             robot_cfg = await rest_api_client.get_robot_config(robot_id)
+            logger.debug(robot_cfg)
             # 更新策略参数
-            strategy_parameters = robot_cfg["strategy_parameters"]
-            trade_interval = strategy_parameters.get("trade_interval", 5)  # 单轮交易的时间间隔
+            strategy_parameters = robot_cfg["data"]["attributes"]["strategy_parameters"]
             direction = strategy_parameters.get(
                 "direction", "both"
             )  # 交易方向。long：只做多；short：只做空；both：多空都做
@@ -89,7 +89,8 @@ async def main():
                 robot_id=robot_id,
                 data={"total_balance": total_balance},
             )
-            await asyncio.sleep(trade_interval)
+            await rest_api_client.post_robot_ping(robot_id)
+            await asyncio.sleep(10)
         except KeyboardInterrupt:
             await ws_api_client.close()
             break
@@ -100,5 +101,5 @@ async def main():
 
 if __name__ == "__main__":
     logger.addHandler(logging.StreamHandler())
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.DEBUG)
     asyncio.run(main())
